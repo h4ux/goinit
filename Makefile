@@ -1,3 +1,4 @@
+#your scripts
 deps: # dependencies
 data: # data
 build: # Go binary builds
