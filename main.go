@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -72,45 +73,48 @@ func createMainFile(repoName string) {
 
 func main() {
 
-	fmt.Printf(`
-	________       .___       .__  __   
-	/  _____/  ____ |   | ____ |__|/  |_ 
-   /   \  ___ /  _ \|   |/    \|  \   __\
-   \    \_\  (  <_> )   |   |  \  ||  |  
-	\______  /\____/|___|___|  /__||__|  
-		   \/                \/            %s, 
-	`, "goinitVTAG")
+	println(color.Colorize(color.Blue, `
+     _____           _____           _   _   
+    / ____|         |_   _|         (_) | |  
+   | |  __    ___     | |    _ __    _  | |_ 
+   | | |_ |  / _ \    | |   | '_ \  | | | __|
+   | |__| | | (_) |  _| |_  | | | | | | | |_ 
+    \_____|  \___/  |_____| |_| |_| |_|  \__| goinitVTAG\n
+	`))
+
+	goinitV := flag.Bool("v", false, "goinit version")
+	giName := flag.String("name", "", "repository name")
+	giDesc := flag.String("desc", "", "repository description")
+	giPublic := flag.Bool("public", false, "repository access (default to private)")
+
+	flag.Parse()
+	if *goinitV {
+		return
+	}
 
 	token := goDotEnvVariable("GH_TOKEN")
 	org := goDotEnvVariable("GH_ORG")
 	folders := goDotEnvVariable("GO_FOLDERS")
 
 	description := "New repository created by goinit"
-	var descriptionOptional string
 	var repoName string
 	var privateRepo string
 
-	if len(os.Args) < 2 {
+	if *giName == "" {
 		println(color.Colorize(color.Red, "Error creating a new repository: missing argument Repo Name"))
 		for repoName == "" {
 			println(color.Colorize(color.Blue, "Please Enter Repository Name: "))
 			fmt.Scanln(&repoName)
 		}
 	} else {
-		repoName = os.Args[1]
+		repoName = *giName
 	}
 
-	println(color.Colorize(color.Blue, "Please Enter Repository Description: (Press Enter for defualt description)"))
-	fmt.Scanln(&descriptionOptional)
-
-	if descriptionOptional != "" {
-		description = descriptionOptional
+	if *giDesc != "" {
+		description = *giDesc
 	}
 
-	println(color.Colorize(color.Blue, "Type Public for public repository or press Enter for private: "))
-	fmt.Scanln(&privateRepo)
-
-	if strings.ToLower(privateRepo) == "public" {
+	if *giPublic {
 		privateRepo = "false"
 	} else {
 		privateRepo = "true"
