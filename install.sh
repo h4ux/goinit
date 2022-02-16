@@ -47,7 +47,7 @@ execute() {
   log_debug "downloading files into ${tmpdir}"
   http_download "${tmpdir}/${TARBALL}" "${TARBALL_URL}"
   http_download "${tmpdir}/${CHECKSUM}" "${CHECKSUM_URL}"
-  hash_sha256_verify "${tmpdir}/${TARBALL}" "${tmpdir}/${CHECKSUM}"
+  hash_md5_verify "${tmpdir}/${TARBALL}" "${tmpdir}/${CHECKSUM}"
   srcdir="${tmpdir}"
   (cd "${tmpdir}" && untar "${TARBALL}")
   test ! -d "${BINDIR}" && install -d "${BINDIR}"
@@ -88,7 +88,8 @@ tag_to_version() {
   fi
   # if version starts with 'v', remove it
   TAG="$REALTAG"
-  VERSION=${TAG#v}
+  #VERSION=${TAG#v}
+  VERSION=${TAG}
 }
 adjust_format() {
   # change format (tar.gz or zip) based on OS
@@ -289,41 +290,42 @@ github_release() {
   test -z "$version" && return 1
   echo "$version"
 }
-hash_sha256() {
+hash_md5() {
   TARGET=${1:-/dev/stdin}
-  if is_command gsha256sum; then
-    hash=$(gsha256sum "$TARGET") || return 1
+  if is_command md5sum; then
+    hash=$(md5sum "$TARGET") || return 1
     echo "$hash" | cut -d ' ' -f 1
-  elif is_command sha256sum; then
-    hash=$(sha256sum "$TARGET") || return 1
-    echo "$hash" | cut -d ' ' -f 1
-  elif is_command shasum; then
-    hash=$(shasum -a 256 "$TARGET" 2>/dev/null) || return 1
+  elif is_command md5; then
+    hash=$(md5 "$TARGET" 2>/dev/null) || return 1
     echo "$hash" | cut -d ' ' -f 1
   elif is_command openssl; then
-    hash=$(openssl -dst openssl dgst -sha256 "$TARGET") || return 1
+    hash=$(openssl -dst openssl dgst -md5 "$TARGET") || return 1
     echo "$hash" | cut -d ' ' -f a
   else
-    log_crit "hash_sha256 unable to find command to compute sha-256 hash"
+    log_crit "hash_md5 unable to find command to compute md5 hash"
     return 1
   fi
 }
-hash_sha256_verify() {
+hash_md5_verify() {
   TARGET=$1
   checksums=$2
   if [ -z "$checksums" ]; then
-    log_err "hash_sha256_verify checksum file not specified in arg2"
+    log_err "hash_md5_verify checksum file not specified in arg2"
     return 1
   fi
   BASENAME=${TARGET##*/}
-  want=$(grep "${BASENAME}" "${checksums}" 2>/dev/null | tr '\t' ' ' | cut -d ' ' -f 1)
+  echo ${BASENAME}
+  echo ${checksums}
+  #want=$(grep "${BASENAME}" "${checksums}" 2>/dev/null | tr '\t' ' ' | cut -d ' ' -f 1)
+  want=$(cat "${checksums}")
   if [ -z "$want" ]; then
-    log_err "hash_sha256_verify unable to find checksum for '${TARGET}' in '${checksums}'"
+  echo $want
+    log_err "hash_md5_verify unable to find checksum for '${TARGET}' in '${checksums}'"
     return 1
   fi
-  got=$(hash_sha256 "$TARGET")
+  got=$(hash_md5 "$TARGET")
   if [ "$want" != "$got" ]; then
-    log_err "hash_sha256_verify checksum for '$TARGET' did not verify ${want} vs $got"
+    log_err "hash_md5_verify checksum for '$TARGET' did not verify ${want} vs $got"
     return 1
   fi
 }
@@ -369,7 +371,7 @@ log_info "found version: ${VERSION} for ${TAG}/${OS}/${ARCH}"
 NAME=${PROJECT_NAME}_${VERSION}_${OS}_${ARCH}
 TARBALL=${NAME}.${FORMAT}
 TARBALL_URL=${GITHUB_DOWNLOAD}/${TAG}/${TARBALL}
-CHECKSUM=${PROJECT_NAME}_${VERSION}_checksums.txt
+CHECKSUM=${PROJECT_NAME}_${VERSION}_${OS}_${ARCH}_checksum.txt
 CHECKSUM_URL=${GITHUB_DOWNLOAD}/${TAG}/${CHECKSUM}
 
 

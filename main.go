@@ -72,6 +72,15 @@ func createMainFile(repoName string) {
 
 func main() {
 
+	fmt.Printf(`
+	________       .___       .__  __   
+	/  _____/  ____ |   | ____ |__|/  |_ 
+   /   \  ___ /  _ \|   |/    \|  \   __\
+   \    \_\  (  <_> )   |   |  \  ||  |  
+	\______  /\____/|___|___|  /__||__|  
+		   \/                \/            %s, 
+	`, "goinitVTAG")
+
 	token := goDotEnvVariable("GH_TOKEN")
 	org := goDotEnvVariable("GH_ORG")
 	folders := goDotEnvVariable("GO_FOLDERS")

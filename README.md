@@ -25,6 +25,17 @@ Put it in ~/Dev/github.com/h4ux/ (or what ever your pathe looks like)
 Add a .env as shown below
 ```
 
+## Installation via install.sh
+
+```bash
+# binary will be in $(go env GOPATH)/bin/goinit
+curl -sSfL https://raw.githubusercontent.com/h4ux/goinit/main/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+# defualt installation into ./bin/
+curl -sSfL https://raw.githubusercontent.com/h4ux/goinit/main/install.sh | sh -s
+
+```
+
 ### .env file format
 ```
 GH_TOKEN={GITHUB Personal token goes here}
