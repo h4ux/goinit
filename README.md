@@ -1,11 +1,19 @@
-# goinit
-New repository created by goinit
+```
+            _____           _____           _   _   
+           / ____|         |_   _|         (_) | |  
+          | |  __    ___     | |    _ __    _  | |_ 
+          | | |_ |  / _ \    | |   | '_ \  | | | __|
+          | |__| | | (_) |  _| |_  | | | | | | | |_ 
+           \_____|  \___/  |_____| |_| |_| |_|  \__|
+ 
+``` 
+
 
 ![Release](https://github.com/h4ux/goinit/actions/workflows/release.yml/badge.svg)
 [![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
 [![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
 
-
+![image](https://user-images.githubusercontent.com/77572830/154341792-8fab3f7d-bb0b-4f49-b6c5-25dc706fc167.png)
 
 This is a very simple Go Lang project structure creator and github repo.
 
@@ -35,6 +43,11 @@ curl -sSfL https://raw.githubusercontent.com/h4ux/goinit/main/install.sh | sh -s
 curl -sSfL https://raw.githubusercontent.com/h4ux/goinit/main/install.sh | sh -s
 
 ```
+
+### Help
+
+![image](https://user-images.githubusercontent.com/77572830/154342133-1cd8cff5-a8b4-421e-a058-c4675ab16591.png)
+
 
 ### .env file format
 ```
