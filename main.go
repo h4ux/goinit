@@ -20,10 +20,7 @@ func goDotEnvVariable(key string) string {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			log.Fatal(err)
-		}
+		home := os.Getenv("HOME")
 		err = godotenv.Load(home + "/.config/goinit/.env")
 		if err != nil {
 			log.Fatalf("Error loading .env file")
