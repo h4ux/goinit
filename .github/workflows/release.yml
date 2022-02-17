@@ -16,7 +16,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: "386"
@@ -36,7 +36,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: amd64
@@ -56,7 +56,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: "arm"
@@ -76,7 +76,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: arm64
@@ -96,7 +96,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: amd64
@@ -116,7 +116,7 @@ jobs:
         replace: ${{ env.RELEASE_VERSION }}
         include: "main.go"
     - name: compile and release
-      uses: ngs/go-release.action@v1.0.1
+      uses: h4ux/go-release.action@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOARCH: 386

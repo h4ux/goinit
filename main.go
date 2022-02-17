@@ -200,7 +200,7 @@ func main() {
 
 		for _, s := range foldersArr {
 			if *giDebug {
-				fmt.Println("Creating folder: %s", s)
+				fmt.Println("Creating folder: " + s)
 			}
 			exec.Command("mkdir", projectsPath+repoName+"/"+string(s)).Run()
 		}
