@@ -79,13 +79,13 @@ func main() {
 
 func main() {
 
-	println(color.Colorize(color.Blue, `
+	println(color.Colorize(color.Cyan, `
      _____           _____           _   _   
     / ____|         |_   _|         (_) | |  
    | |  __    ___     | |    _ __    _  | |_ 
    | | |_ |  / _ \    | |   | '_ \  | | | __|
    | |__| | | (_) |  _| |_  | | | | | | | |_ 
-    \_____|  \___/  |_____| |_| |_| |_|  \__| goinitVTAG\n
+    \_____|  \___/  |_____| |_| |_| |_|  \__| goinitVTAG
 	`))
 
 	goinitV := flag.Bool("v", false, "goinit version")
