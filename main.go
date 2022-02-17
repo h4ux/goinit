@@ -20,9 +20,18 @@ func goDotEnvVariable(key string) string {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		home, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = godotenv.Load(home + "/.config/goinit/.env")
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}
 	}
-
+	if os.Getenv(key) == "" {
+		log.Fatalf("Error " + key + " not set in .env file")
+	}
 	return os.Getenv(key)
 }
 
@@ -47,26 +56,26 @@ func createFile(name string, content string) {
 }
 func createMakeFile(repoName string) {
 	content := `##Create your Make file
-	deps: # install dependencies
-	data: # runs go generate and/or other things like protoc
-	build: # builds the Go binary
-	image: # builds Docker image
-	lint: # runs go vet or other similar tools
-	test: # runs tests
-	package: # packages the service/app
-	publish: # publishes the service/app`
+deps: # dependencies
+data: # data
+build: # Go binary builds
+image: # Docker image build if any
+lint: # run go vet or other lint
+test: # run tests
+package: # packages
+publish: # publish`
 
 	createFile(repoName+"/Makefile", content)
 }
 
 func createMainFile(repoName string) {
 	content := `
-				package main
-	            import "fmt"
-	
-	            func main() {
-	            	fmt.Println("goinit is awesome")
-	            }`
+package main
+import "fmt"
+
+func main() {
+	fmt.Println("goinit is awesome")
+}`
 
 	createFile(repoName+"/main.go", content)
 }
@@ -83,6 +92,7 @@ func main() {
 	`))
 
 	goinitV := flag.Bool("v", false, "goinit version")
+	giDebug := flag.Bool("d", false, "goinit debug (verbose)")
 	giName := flag.String("name", "", "repository name")
 	giDesc := flag.String("desc", "", "repository description")
 	giPublic := flag.Bool("public", false, "repository access (default to private)")
@@ -95,6 +105,15 @@ func main() {
 	token := goDotEnvVariable("GH_TOKEN")
 	org := goDotEnvVariable("GH_ORG")
 	folders := goDotEnvVariable("GO_FOLDERS")
+	projectsPath := goDotEnvVariable("GO_PROJECTS_PATH")
+
+	//check for trailing slash and add if not exists
+	if projectsPath[len(projectsPath)-1:] != "/" {
+		projectsPath = projectsPath + "/"
+	}
+	if *giDebug {
+		fmt.Println("Project path: ", projectsPath)
+	}
 
 	description := "New repository created by goinit"
 	var repoName string
@@ -156,8 +175,6 @@ func main() {
 	}
 	defer res.Body.Close()
 
-	//fmt.Printf("%+v\n", res)
-
 	body, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
@@ -167,24 +184,30 @@ func main() {
 
 	if res.StatusCode == 200 || res.StatusCode == 201 {
 		println(color.Colorize(color.Blue, "Successfully created a new repository\n"))
-		fmt.Println(string(body))
+		if *giDebug {
+			fmt.Println(string(body))
+		}
 
-		cmd := exec.Command("git", "clone", "https://"+org+":"+token+"@github.com/"+org+"/"+repoName+".git")
-		err := cmd.Run()
+		cmd := exec.Command("git", "clone", "https://"+org+":"+token+"@github.com/"+org+"/"+repoName+".git", projectsPath+repoName)
+		//err := cmd.Run()
+		output, err := cmd.CombinedOutput()
 		if err != nil {
+			fmt.Println(fmt.Sprint(err) + ": " + string(output))
 			log.Fatal(err)
 		}
 
 		foldersArr := strings.Split(folders, ",")
 
-		for i, s := range foldersArr {
-			fmt.Println(i, s)
-			exec.Command("mkdir", repoName+"/"+string(s)).Run()
+		for _, s := range foldersArr {
+			if *giDebug {
+				fmt.Println("Creating folder: %s", s)
+			}
+			exec.Command("mkdir", projectsPath+repoName+"/"+string(s)).Run()
 		}
 
-		createMakeFile(repoName)
-		createMainFile(repoName)
-		addToFile(repoName+"/.gitignore", ".env\n/bin\ngo.mod\ngo.sum")
+		createMakeFile(projectsPath + repoName)
+		createMainFile(projectsPath + repoName)
+		addToFile(projectsPath+repoName+"/.gitignore", ".env\n/bin\ngo.mod\ngo.sum")
 
 	} else {
 		println(color.Colorize(color.Red, "Error creating a new repository"))

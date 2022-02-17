@@ -58,6 +58,12 @@ execute() {
     install "${srcdir}/${binexe}" "${BINDIR}/"
     log_info "installed ${BINDIR}/${binexe}"
   done
+  #create enviorment file
+  mkdir -p ~/.config/goinit && touch ~/.config/goinit/.env
+  grep -qF 'GH_TOKEN=' ~/.config/goinit/.env || echo 'GH_TOKEN=' >> ~/.config/goinit/.env
+  grep -qF 'GH_ORG=' ~/.config/goinit/.env || echo 'GH_ORG=' >> ~/.config/goinit/.env
+  grep -qF 'GO_FOLDERS=' ~/.config/goinit/.env || echo 'GO_FOLDERS=' >> ~/.config/goinit/.env
+  grep -qF 'GO_PROJECTS_PATH=' ~/.config/goinit/.env || echo 'GO_PROJECTS_PATH=' >> ~/.config/goinit/.env
   rm -rf "${tmpdir}"
 }
 get_binaries() {
